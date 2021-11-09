@@ -1,0 +1,13 @@
+name: biogeme-aesara
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - ipykernel
+  - numpy
+  - pandas
+  - scipy
+  - cython
+  - aesara
+prefix: C:\Users\Melvin\AppData\Local\miniconda3\envs\biogeme-aesara
