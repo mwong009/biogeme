@@ -30,6 +30,9 @@ archive/tools/prepareData/biosampledata
 #                                           #
 #############################################
 
+# tox
+.tox
+
 # All .lo files
 **/*.lo
 **/*.la
@@ -335,7 +338,6 @@ examples/notebooks/test_dumped.dat
 examples/notebooks/test~01.dat
 examples/notebooks/test~02.dat
 examples/notebooks/Untitled.ipynb
-src/bioDerivatives.pyx
 reports/pandasIndicators39/pandasIndicators.aux
 reports/pandasIndicators39/pandasIndicators.bbl
 reports/pandasIndicators39/pandasIndicators.blg
@@ -349,3 +351,4 @@ reports/pandasIndicators39/pandasIndicators.pdf
 src/cexpressions.cpp
 src/tmp.py
 tests/functions/errors.lis
+biogeme/tmp.py
