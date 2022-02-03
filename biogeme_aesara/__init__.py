@@ -10,7 +10,8 @@ class BetaShared(Beta):
     def __init__(self, name, value, lowerbound, upperbound, status):
         super().__init__(name, value, lowerbound, upperbound, status)
 
-        self.sharedVar = aesara.shared(np.array(value).astype(aesara.config.floatX))
+        self.sharedVar = aesara.shared(
+            value=np.array(value).astype(aesara.config.floatX), name=name)
 
     def __call__(self):
         return self.sharedVar
@@ -91,3 +92,8 @@ class DatabaseShared(Database):
             y_data.append(self.data[y.name])
         return y_data
 
+    def inputs(self):
+        return self.get_x() + self.get_y()
+    
+    def input_data(self):
+        return self.get_x_data() + self.get_y_data()
