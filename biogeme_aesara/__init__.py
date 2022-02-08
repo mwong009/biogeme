@@ -5,7 +5,6 @@ from aesara.tensor.var import TensorVariable
 from biogeme.database import Database
 from biogeme.expressions import Beta
 
-
 class BetaShared(Beta):
     def __init__(self, name, value, lowerbound, upperbound, status):
         super().__init__(name, value, lowerbound, upperbound, status)
@@ -71,11 +70,15 @@ class DatabaseShared(Database):
                 list_of_x.append(self.variables[var].x)
         return list_of_x
 
-    def get_x_data(self):
+    def get_x_data(self, index=None, batch_size=None, shift=None):
         x_data = []
         list_of_x = self.get_x()
         for x in list_of_x:
-            x_data.append(self.data[[x.name]])
+            if index == None:
+                x_data.append(self.data[[x.name]])
+            else:
+                x_data.append(self.data[[x.name]][
+                    index * batch_size + shift: (index+1) * batch_size + shift])
         return x_data
 
     def get_y(self):
@@ -85,15 +88,37 @@ class DatabaseShared(Database):
                 list_of_y.append(self.variables[var].y)
         return list_of_y
 
-    def get_y_data(self):
+    def get_y_data(self, index=None, batch_size=None, shift=None):
         y_data = []
         list_of_y = self.get_y()
         for y in list_of_y:
-            y_data.append(self.data[y.name])
+            if index == None:
+                y_data.append(self.data[y.name])
+            else:
+                y_data.append(self.data[y.name][
+                    index * batch_size + shift: (index+1) * batch_size + shift])
         return y_data
 
     def inputs(self):
         return self.get_x() + self.get_y()
     
-    def input_data(self):
-        return self.get_x_data() + self.get_y_data()
+    def input_data(self, index=None, batch_size=None, shift=None):
+        return self.get_x_data(index, batch_size, shift) + self.get_y_data(index, batch_size, shift)
+    
+    def autoscale(self, variables=None, verbose=False):
+        for d in self.data:
+            max_val = np.max(self.data[d])
+            min_val = np.min(self.data[d])
+            scale = 1.
+            if variables is None:
+                varlist = self.get_x()
+            else:
+                varlist = variables
+            if d in varlist:
+                if min_val >= 0.:
+                    while max_val > 10:
+                        scale *= 10.
+                        self.data[d] = self.data[d] / scale
+                        max_val = np.max(self.data[d])
+                    if verbose:
+                        print("scaling {} by {}".format(d, scale))
